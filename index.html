@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Hello World</title>
+    <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  </head>
+  <style>
+    .wrapper {
+      display: flex;
+    }
+    .wrapper__input {
+      display: flex;
+      align-items: center;
+      margin-right: 4px;
+      margin-left: 4px;
+    }
+    input {
+      width: 41px;
+      height: 87px;
+      font-size: 48px;
+      padding-left: 12px;
+      outline: none;
+      border: 2px solid green;
+      border-radius: 8px;
+    }
+
+    input:focus {
+      border-color: red;
+    }
+  </style>
+  <body>
+    <div id="app"></div>
+    <script type="text/babel">
+      function InputPin() {
+        const initialValues = Array(6).fill("");
+
+        const [values, setValues] = React.useState(initialValues);
+        const inputRefs = React.useRef(Array(initialValues.length));
+
+        const setInputValue = (value, i) => {
+          const lastValue = value[value.length - 1] || "";
+
+          if (!~lastValue.search(/[0-9]|^$/)) return;
+
+          const prevInp = inputRefs.current[i - 1];
+          const currInp = inputRefs.current[i];
+          const nextInp = inputRefs.current[i + 1];
+
+          if (value && nextInp) nextInp.focus();
+
+          setValues((currState) =>
+            currState.map((el, elI) => (i === elI ? lastValue : el))
+          );
+        };
+
+        const onKey = (keyEvent, i) => {
+          const { target, code } = keyEvent;
+
+          const prevInp = inputRefs.current[i - 1];
+          const currInp = inputRefs.current[i];
+          const nextInp = inputRefs.current[i + 1];
+
+          if (code === "Backspace") {
+            if (prevInp && !currInp.value) prevInp.focus();
+
+            return;
+          }
+
+          if (keyEvent.key === currInp.value && !nextInp) currInp.blur();
+        };
+
+        return (
+          <div class="wrapper">
+            {values.map((el, i) => (
+              <React.Fragment key={i}>
+                <div class="wrapper__input" key={i}>
+                  <input
+                    ref={(el) => (inputRefs.current[i] = el)}
+                    value={el}
+                    onChange={(e) => {
+                      setInputValue(e.target.value, i);
+                    }}
+                    onKeyDown={(e) => {
+                      onKey(e, i);
+                    }}
+                  />
+                </div>
+              </React.Fragment>
+            ))}
+          </div>
+        );
+      }
+
+      ReactDOM.render(<InputPin />, document.getElementById("app"));
+    </script>
+  </body>
+</html>
