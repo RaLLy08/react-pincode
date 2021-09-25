@@ -9,20 +9,30 @@
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   </head>
   <style>
+    body {
+      height: 100vh;
+    }
+    #app {
+      height: 100%;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+    }
     .wrapper {
       display: flex;
+      height: 100%;
     }
     .wrapper__input {
       display: flex;
       align-items: center;
-      margin-right: 4px;
-      margin-left: 4px;
+      margin-right: 20px;
+      margin-left: 20px;
     }
     input {
-      width: 41px;
-      height: 87px;
-      font-size: 48px;
-      padding-left: 12px;
+      width: 85px;
+      height: 120px;
+      font-size: 100px;
+      padding-left: 30px;
       outline: none;
       border: 2px solid green;
       border-radius: 8px;
@@ -46,8 +56,6 @@
 
           if (!~lastValue.search(/[0-9]|^$/)) return;
 
-          const prevInp = inputRefs.current[i - 1];
-          const currInp = inputRefs.current[i];
           const nextInp = inputRefs.current[i + 1];
 
           if (value && nextInp) nextInp.focus();
@@ -57,20 +65,21 @@
           );
         };
 
-        const onKey = (keyEvent, i) => {
-          const { target, code } = keyEvent;
+        const onKey = ({ code, key }, i) => {
 
           const prevInp = inputRefs.current[i - 1];
           const currInp = inputRefs.current[i];
           const nextInp = inputRefs.current[i + 1];
 
+          if (code === "ArrowLeft") prevInp?.focus();
+          if (code === "ArrowRight") nextInp?.focus();
           if (code === "Backspace") {
             if (prevInp && !currInp.value) prevInp.focus();
 
             return;
           }
 
-          if (keyEvent.key === currInp.value && !nextInp) currInp.blur();
+          if (key === currInp.value && !nextInp) currInp.blur();
         };
 
         return (
