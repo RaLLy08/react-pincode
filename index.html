@@ -88,6 +88,7 @@
               <React.Fragment key={i}>
                 <div class="wrapper__input" key={i}>
                   <input
+                    inputmode="numeric"
                     ref={(el) => (inputRefs.current[i] = el)}
                     value={el}
                     onChange={(e) => {
