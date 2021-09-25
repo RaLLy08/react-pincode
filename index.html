@@ -65,15 +65,15 @@
           );
         };
 
-        const onKey = ({ code, key }, i) => {
+        const onKey = ({ key }, i) => {
 
           const prevInp = inputRefs.current[i - 1];
           const currInp = inputRefs.current[i];
           const nextInp = inputRefs.current[i + 1];
 
-          if (code === "ArrowLeft") prevInp?.focus();
-          if (code === "ArrowRight") nextInp?.focus();
-          if (code === "Backspace") {
+          if (key === "ArrowLeft") prevInp?.focus();
+          if (key === "ArrowRight") nextInp?.focus();
+          if (key === "Backspace") {
             if (prevInp && !currInp.value) prevInp.focus();
 
             return;
