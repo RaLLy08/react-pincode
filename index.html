@@ -50,34 +50,39 @@
 
         const [values, setValues] = React.useState(initialValues);
         const inputRefs = React.useRef(Array(initialValues.length));
-
+        React.useEffect(() => {
+          if (inputRefs) inputRefs.current[0]?.focus();
+        }, [inputRefs]);
         const setInputValue = (value, i) => {
-          const lastValue = value[value.length - 1] || "";
+          setValues((currState) => {
+            const newState = currState.map((el, elI) =>
+              i === elI ? value : el
+            );
 
-          if (!~lastValue.search(/[0-9]|^$/)) return;
-
-          const nextInp = inputRefs.current[i + 1];
-
-          if (value && nextInp) nextInp.focus();
-
-          setValues((currState) =>
-            currState.map((el, elI) => (i === elI ? lastValue : el))
-          );
+            return newState;
+          });
         };
 
-        const onKey = ({ key }, i) => {
-
+        const onKeyNavigate = ({ key }, i) => {
           const prevInp = inputRefs.current[i - 1];
           const currInp = inputRefs.current[i];
           const nextInp = inputRefs.current[i + 1];
+
+          if (!currInp) return;
 
           if (key === "ArrowLeft") prevInp?.focus();
           if (key === "ArrowRight") nextInp?.focus();
           if (key === "Backspace") {
             if (prevInp && !currInp.value) prevInp.focus();
+            setInputValue("", i);
 
             return;
           }
+          // if value not a number
+          if (isNaN(key)) return;
+          if (key && nextInp) nextInp.focus();
+
+          setInputValue(key, i);
 
           if (key === currInp.value && !nextInp) currInp.blur();
         };
@@ -91,11 +96,8 @@
                     inputmode="numeric"
                     ref={(el) => (inputRefs.current[i] = el)}
                     value={el}
-                    onChange={(e) => {
-                      setInputValue(e.target.value, i);
-                    }}
                     onKeyDown={(e) => {
-                      onKey(e, i);
+                      onKeyNavigate(e, i);
                     }}
                   />
                 </div>
