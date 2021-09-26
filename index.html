@@ -73,8 +73,13 @@
           if (key === "ArrowLeft") prevInp?.focus();
           if (key === "ArrowRight") nextInp?.focus();
           if (key === "Backspace") {
-            if (prevInp && !currInp.value) prevInp.focus();
-            setInputValue("", i);
+            if (prevInp && !currInp.value){
+              setInputValue("", i - 1); 
+              prevInp.focus()
+            } else {
+              setInputValue("", i);
+            };
+
 
             return;
           }
