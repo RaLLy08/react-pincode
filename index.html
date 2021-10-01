@@ -53,6 +53,7 @@
         React.useEffect(() => {
           if (inputRefs) inputRefs.current[0]?.focus();
         }, [inputRefs]);
+
         const setInputValue = (value, i) => {
           setValues((currState) => {
             const newState = currState.map((el, elI) =>
@@ -64,33 +65,41 @@
         };
 
         const onKeyNavigate = ({ key }, i) => {
-          const prevInp = inputRefs.current[i - 1];
-          const currInp = inputRefs.current[i];
-          const nextInp = inputRefs.current[i + 1];
+            const prevInp = inputRefs.current[i - 1];
+            const currInp = inputRefs.current[i];
+            const nextInp = inputRefs.current[i + 1];
 
-          if (!currInp) return;
+            if (!currInp) return;
 
-          if (key === "ArrowLeft") prevInp?.focus();
-          if (key === "ArrowRight") nextInp?.focus();
-          if (key === "Backspace") {
-            if (prevInp && !currInp.value){
-              setInputValue("", i - 1); 
-              prevInp.focus()
-            } else {
-              setInputValue("", i);
-            };
+            if (key === "ArrowLeft") prevInp?.focus();
+            if (key === "ArrowRight") nextInp?.focus();
+            if (key === "Delete") {
+              if (nextInp && !currInp.value) {
+                nextInp.focus();
+                setInputValue("", i + 1);
+              } else {
+                setInputValue("", i);
+              }  
+              return;
+            }
+            if (key === "Backspace") {
+              if (prevInp && !currInp.value) {
+                prevInp.focus();
+                setInputValue("", i - 1);
+              } else {
+                setInputValue("", i);
+              }
 
+              return;
+            }
+                  // if value not a number
+            if (isNaN(key)) return;
+            if (key && nextInp) nextInp.focus();
 
-            return;
-          }
-          // if value not a number
-          if (isNaN(key)) return;
-          if (key && nextInp) nextInp.focus();
+            setInputValue(key, i);
 
-          setInputValue(key, i);
-
-          if (key === currInp.value && !nextInp) currInp.blur();
-        };
+            if (key === currInp.value && !nextInp) currInp.blur();
+          };
 
         return (
           <div class="wrapper">
